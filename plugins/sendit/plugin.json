@@ -1,0 +1,90 @@
+{
+  "$schema": "https://agent-plugins.org/schemas/1.0.0/plugin.schema.json",
+  "name": "sendit",
+  "version": "1.1.0",
+  "description": "Connect social accounts, validate and preview posts, publish or schedule content, and review analytics with SendIt.",
+  "author": {
+    "name": "Infinite Apps AI",
+    "url": "https://sendit.infiniteappsai.com"
+  },
+  "homepage": "https://sendit.infiniteappsai.com",
+  "repository": "https://github.com/Shree-git/sendit-openai-plugin",
+  "license": "MIT",
+  "keywords": ["social-media", "publishing", "scheduling", "analytics", "mcp", "sendit"],
+  "extensions": {
+    "com.openai": {
+      "interface": {
+        "displayName": "SendIt",
+        "shortDescription": "Publish and schedule posts",
+        "longDescription": "Use SendIt to connect social accounts, check platform requirements, validate drafts, preview posts, upload media through a browser link, publish approved content, schedule future posts, manage scheduled content, and review analytics. The included MCP profile supports LinkedIn, Instagram, Threads, TikTok, X, Facebook, YouTube, and Pinterest. A SendIt account and authorization for the selected social accounts are required. Available actions depend on each platform's permissions and your SendIt plan. The skill also documents SendIt's optional terminal MCP bridge for Codex and other local clients.",
+        "developerName": "Infinite Apps AI",
+        "category": "Productivity",
+        "websiteURL": "https://sendit.infiniteappsai.com",
+        "supportURL": "https://sendit.infiniteappsai.com/support",
+        "privacyPolicyURL": "https://sendit.infiniteappsai.com/privacy",
+        "termsOfServiceURL": "https://sendit.infiniteappsai.com/terms",
+        "logo": "./assets/logo.png",
+        "composerIcon": "./assets/logo.png",
+        "defaultPrompt": [
+          "Show my connected social accounts and any accounts that need reconnecting.",
+          "Check and preview this LinkedIn and Threads draft before I publish it.",
+          "Show my pending scheduled posts."
+        ]
+      },
+      "review": {
+        "test_cases": {
+          "positive": [
+            {
+              "description": "Use a dedicated reviewer SendIt account with sample social connections. Report only returned account status, including reconnect guidance.",
+              "prompt": "Which social accounts do I have connected in SendIt, and which need attention?",
+              "tools_triggered": "list_connected_accounts",
+              "expected_behavior": "Calls list_connected_accounts. Reports connected, disconnected, and reconnect-required states from the returned accounts. Does not treat connected=true alone as a healthy token. Does not publish or expose OAuth credentials."
+            },
+            {
+              "description": "A text-only draft on LinkedIn, Threads, and X exercises valid cross-platform validation without a write.",
+              "prompt": "Check this draft for LinkedIn, Threads, and X: SendIt plugin review: checking a text draft before publishing.",
+              "tools_triggered": "get_platform_requirements, validate_content",
+              "expected_behavior": "Calls validate_content with platforms linkedin, threads, and x and the exact draft in content.text. Reports per-platform errors and warnings from the result, loading get_platform_requirements when limits are needed. Does not publish or schedule."
+            },
+            {
+              "description": "Preview the same text draft across two platforms using the submitted profile's UI resources.",
+              "prompt": "Show how this would look on LinkedIn and Threads without posting: SendIt plugin review: checking a text draft before publishing.",
+              "tools_triggered": "preview_content",
+              "expected_behavior": "Calls preview_content with platforms linkedin and threads and the exact draft. Shows the returned preview and character/validation information. Describes it as a preview, never a published post. No publishing or scheduling tool is invoked."
+            },
+            {
+              "description": "Run only with a healthy Threads connection on a dedicated reviewer account that permits test posts. The prompt explicitly authorizes a public test post.",
+              "prompt": "Publish this test post to my connected Threads account now: SendIt plugin review: publishing test.",
+              "tools_triggered": "list_connected_accounts, validate_content, preview_content, publish_content",
+              "expected_behavior": "Verifies the intended Threads account is healthy, validates and previews content.text, then calls publish_content with platforms=[threads] and the exact approved draft. Returns the actual platform success, post ID or URL when present, or the precise failure. Never fabricates a successful publish or retries an uncertain write automatically."
+            },
+            {
+              "description": "Run with a healthy reviewer Threads account and a fresh conversation time. Resolve tomorrow in America/Los_Angeles so the test never contains an expired fixed date.",
+              "prompt": "Schedule this on Threads tomorrow at 10 AM America/Los_Angeles: SendIt plugin review: scheduling test. Then show my pending posts.",
+              "tools_triggered": "list_connected_accounts, validate_content, preview_content, schedule_content, get_scheduled_posts",
+              "expected_behavior": "Resolves tomorrow at 10 AM America/Los_Angeles to a future RFC3339 instant using the conversation date and daylight saving rules. Validates and previews the exact draft, calls schedule_content for threads, then get_scheduled_posts. Reports the returned schedule ID and time in the requested timezone. Confirms any ambiguity before scheduling and never invents schedule IDs."
+            }
+          ],
+          "negative": [
+            {
+              "description": "Calendar edits are outside the plugin's capabilities. Explain that limit without calling any SendIt tool.",
+              "prompt": "Move my 3 PM calendar meeting tomorrow to Friday morning."
+            },
+            {
+              "description": "Email campaign delivery is outside the plugin's capabilities. Do not convert the request into a social post or invoke SendIt tools.",
+              "prompt": "Email a newsletter about our launch to every customer."
+            },
+            {
+              "description": "Standalone image generation is outside the submitted profile. Do not call publish, schedule, or upload tools when no social publishing workflow was requested.",
+              "prompt": "Generate a photorealistic logo concept for my startup."
+            }
+          ]
+        }
+      },
+      "publication": {
+        "countries": [],
+        "release_notes": "Adds a portable SendIt plugin package and social publishing skill for ChatGPT and Codex, with the hosted OAuth MCP profile, terminal setup guidance, and current public listing and review cases."
+      }
+    }
+  }
+}

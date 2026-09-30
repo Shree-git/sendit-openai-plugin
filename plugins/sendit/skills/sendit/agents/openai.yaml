@@ -1,0 +1,13 @@
+interface:
+  display_name: "SendIt"
+  short_description: "Publish and schedule social posts"
+  default_prompt: "Use $sendit to check and preview my social post before publishing."
+dependencies:
+  tools:
+    - type: "mcp"
+      value: "sendit"
+      description: "Connect accounts, validate and preview posts, publish or schedule content, and review analytics."
+      transport: "streamable_http"
+      url: "https://sendit.infiniteappsai.com/api/mcp/chatgpt"
+policy:
+  allow_implicit_invocation: true

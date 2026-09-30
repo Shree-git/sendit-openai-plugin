@@ -1,0 +1,9 @@
+{
+  "$schema": "https://agent-plugins.org/schemas/1.0.0/mcp.schema.json",
+  "mcpServers": {
+    "sendit": {
+      "type": "streamable-http",
+      "url": "https://sendit.infiniteappsai.com/api/mcp/chatgpt"
+    }
+  }
+}

@@ -1,0 +1,12 @@
+{
+  "name": "sendit-plugins",
+  "interface": { "displayName": "SendIt plugins" },
+  "plugins": [
+    {
+      "name": "sendit",
+      "source": { "source": "local", "path": "./plugins/sendit" },
+      "policy": { "installation": "AVAILABLE", "authentication": "ON_INSTALL" },
+      "category": "Productivity"
+    }
+  ]
+}
