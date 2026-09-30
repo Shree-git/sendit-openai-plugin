@@ -2,7 +2,7 @@ export const SENDIT_API_BASE = 'https://sendit.infiniteappsai.com';
 export const SENDIT_API_KEY_URL = `${SENDIT_API_BASE}/dashboard/settings`;
 export const SENDIT_AUTH_URL = `${SENDIT_API_BASE}/login`;
 export const SENDIT_MCP_PACKAGE = '@senditapp/mcp';
-export const SENDIT_MCP_VERSION = '0.1.2';
+export const SENDIT_MCP_VERSION = '0.1.3';
 export const SENDIT_MCP_RELEASE_URL = `https://github.com/Shree-git/sendit-openai-plugin/releases/download/mcp-v${SENDIT_MCP_VERSION}/senditapp-mcp-${SENDIT_MCP_VERSION}.tgz`;
 
 /** Use the repaired public release while retaining an explicit distribution override. */

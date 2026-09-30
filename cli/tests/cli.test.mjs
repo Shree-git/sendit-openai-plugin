@@ -1,4 +1,5 @@
 import assert from 'node:assert/strict';
+import { spawnSync } from 'node:child_process';
 import { createServer } from 'node:http';
 import { mkdtemp, readFile, rm, writeFile } from 'node:fs/promises';
 import { tmpdir } from 'node:os';
@@ -11,6 +12,62 @@ import { verifyApiKey } from '../dist/verify.js';
 import { writeConfig } from '../dist/clients.js';
 
 const packageRoot = resolve(dirname(fileURLToPath(import.meta.url)), '..');
+
+function runCli(args) {
+  return spawnSync(process.execPath, [join(packageRoot, 'dist/cli.js'), ...args], {
+    input: '',
+    encoding: 'utf8',
+    timeout: 5_000,
+  });
+}
+
+test('help flags and the help command exit successfully without entering the setup wizard', () => {
+  for (const args of [['--help'], ['-h'], ['help'], ['serve', '--help'], ['setup', '-h']]) {
+    const result = runCli(args);
+    assert.equal(result.error, undefined);
+    assert.equal(result.status, 0);
+    assert.match(result.stdout, /Usage:/);
+    assert.match(result.stdout, /sendit-mcp serve/);
+    assert.match(result.stdout, /sendit-mcp.*setup/);
+    assert.match(result.stdout, /Supported clients:/);
+    assert.match(result.stdout, /Claude Desktop/);
+    assert.doesNotMatch(result.stdout, /Which AI client|One-Click MCP Installer/);
+    assert.equal(result.stderr, '');
+  }
+});
+
+test('version flags print the package version and exit without prompting', async () => {
+  const { version } = JSON.parse(await readFile(join(packageRoot, 'package.json'), 'utf8'));
+  for (const args of [['--version'], ['-v']]) {
+    const result = runCli(args);
+    assert.equal(result.error, undefined);
+    assert.equal(result.status, 0);
+    assert.equal(result.stdout.trim(), version);
+    assert.doesNotMatch(result.stdout, /Which AI client|One-Click MCP Installer/);
+    assert.equal(result.stderr, '');
+  }
+});
+
+test('unknown commands, options, and extra arguments fail with usage instead of starting the wizard', () => {
+  for (const args of [['publish'], ['--unknown'], ['serve', '--unknown'], ['setup', 'extra']]) {
+    const result = runCli(args);
+    assert.equal(result.error, undefined);
+    assert.equal(result.status, 1);
+    assert.match(result.stderr, /Usage:/);
+    assert.doesNotMatch(result.stdout + result.stderr, /Which AI client|One-Click MCP Installer/);
+  }
+});
+
+test('default invocation and explicit setup retain the interactive wizard', () => {
+  for (const args of [[], ['setup']]) {
+    const result = runCli(args);
+    assert.equal(result.error, undefined);
+    assert.equal(result.status, 0);
+    assert.match(result.stdout, /One-Click MCP Installer/);
+    assert.equal(result.stderr, '');
+  }
+});
+
 const calls = [];
 const tools = [
   {
@@ -144,7 +201,7 @@ test('the installer pins the patched release and preserves other servers', async
     const config = JSON.parse(await readFile(path, 'utf8'));
     assert.deepEqual(config.mcpServers.sendit.args, [
       '-y',
-      '--package=https://github.com/Shree-git/sendit-openai-plugin/releases/download/mcp-v0.1.2/senditapp-mcp-0.1.2.tgz',
+      '--package=https://github.com/Shree-git/sendit-openai-plugin/releases/download/mcp-v0.1.3/senditapp-mcp-0.1.3.tgz',
       'sendit-mcp',
       'serve',
     ]);
@@ -162,9 +219,9 @@ test('the distribution override supports explicit npm versions and self-hosted H
   const originalPackage = process.env.SENDIT_MCP_PACKAGE;
   try {
     for (const packageSpec of [
-      '@example/sendit-mcp@0.1.2',
-      '@example/sendit-mcp@^0.1.2',
-      'https://downloads.infiniteappsai.com/sendit-mcp-0.1.2.tgz',
+      '@example/sendit-mcp@0.1.3',
+      '@example/sendit-mcp@^0.1.3',
+      'https://downloads.infiniteappsai.com/sendit-mcp-0.1.3.tgz',
     ]) {
       process.env.SENDIT_MCP_PACKAGE = packageSpec;
       const path = join(directory, 'client.json');
@@ -215,7 +272,7 @@ test('invalid distribution overrides cannot rewrite a client configuration', asy
   }
 });
 
-test('every generated client config resolves the repaired 0.1.2 executable', async () => {
+test('every generated client config resolves the repaired 0.1.3 executable', async () => {
   const directory = await mkdtemp(join(tmpdir(), 'sendit-cli-clients-'));
   const originalPackage = process.env.SENDIT_MCP_PACKAGE;
   delete process.env.SENDIT_MCP_PACKAGE;
@@ -228,7 +285,7 @@ test('every generated client config resolves the repaired 0.1.2 executable', asy
       assert.equal(entry.command, 'npx');
       assert.equal(
         entry.args[1],
-        '--package=https://github.com/Shree-git/sendit-openai-plugin/releases/download/mcp-v0.1.2/senditapp-mcp-0.1.2.tgz'
+        '--package=https://github.com/Shree-git/sendit-openai-plugin/releases/download/mcp-v0.1.3/senditapp-mcp-0.1.3.tgz'
       );
       assert.deepEqual(entry.args.slice(2), ['sendit-mcp', 'serve']);
       assert.ok(!entry.args.includes('@senditapp/mcp'));

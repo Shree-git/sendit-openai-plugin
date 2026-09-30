@@ -61,10 +61,10 @@ Discover its catalog before using capabilities beyond the scoped public profile.
 ## Optional terminal bridge
 
 ```bash
-npx -y --package=https://github.com/Shree-git/sendit-openai-plugin/releases/download/mcp-v0.1.2/senditapp-mcp-0.1.2.tgz sendit-mcp
+npx -y --package=https://github.com/Shree-git/sendit-openai-plugin/releases/download/mcp-v0.1.3/senditapp-mcp-0.1.3.tgz sendit-mcp
 ```
 
-The public `0.1.2` bridge release provides the `sendit-mcp` setup wizard and a stdio bridge.
+The public `0.1.3` bridge release provides the `sendit-mcp` setup wizard and a stdio bridge.
 Its npm registry update is pending publishing access; the command above installs the same verified package directly from GitHub.
 Bridge source and tests are in the public repository's `cli/` directory.
 The hosted plugin uses OAuth; the optional terminal bridge uses a SendIt API key entered locally.

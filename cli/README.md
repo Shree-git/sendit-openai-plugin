@@ -5,10 +5,10 @@ One-click MCP server installer for [SendIt](https://sendit.infiniteappsai.com) -
 ## Quick Start
 
 ```bash
-npx -y --package=https://github.com/Shree-git/sendit-openai-plugin/releases/download/mcp-v0.1.2/senditapp-mcp-0.1.2.tgz sendit-mcp
+npx -y --package=https://github.com/Shree-git/sendit-openai-plugin/releases/download/mcp-v0.1.3/senditapp-mcp-0.1.3.tgz sendit-mcp
 ```
 
-The repaired `0.1.2` package is distributed through [GitHub Releases](https://github.com/Shree-git/sendit-openai-plugin/releases/tag/mcp-v0.1.2).
+The repaired `0.1.3` package is distributed through [GitHub Releases](https://github.com/Shree-git/sendit-openai-plugin/releases/tag/mcp-v0.1.3).
 The npm registry currently serves the older `0.1.1` version while npm publishing access is being repaired.
 The wizard pins generated client configurations to the same GitHub release so they run the repaired executable.
 
@@ -40,7 +40,7 @@ If you prefer to configure manually, add this to your AI client's MCP config:
       "command": "npx",
       "args": [
         "-y",
-        "--package=https://github.com/Shree-git/sendit-openai-plugin/releases/download/mcp-v0.1.2/senditapp-mcp-0.1.2.tgz",
+        "--package=https://github.com/Shree-git/sendit-openai-plugin/releases/download/mcp-v0.1.3/senditapp-mcp-0.1.3.tgz",
         "sendit-mcp",
         "serve"
       ],
@@ -53,6 +53,17 @@ If you prefer to configure manually, add this to your AI client's MCP config:
 ```
 
 ## Commands
+
+### `sendit-mcp --help` or `sendit-mcp help`
+
+Show usage, commands, and supported clients without starting the setup wizard.
+The short form is `-h`.
+
+### `sendit-mcp --version`
+
+Print the installed CLI version without starting setup.
+The short form is `-v`.
+Unknown commands and options exit with an error and usage information.
 
 ### `sendit-mcp`
 
@@ -73,7 +84,7 @@ For the public OpenAI plugin, skill, and OAuth setup, use [SendIt's public plugi
 
 Set `SENDIT_MCP_PACKAGE` before running the wizard to generate configurations for an explicit npm package spec or a self-hosted HTTPS `.tgz` or `.tar.gz` URL.
 The package must expose the `sendit-mcp` executable.
-For example, a private registry can use `@your-team/sendit-mcp@0.1.2`, with registry authentication configured locally in npm.
+For example, a private registry can use `@your-team/sendit-mcp@0.1.3`, with registry authentication configured locally in npm.
 Tarball URLs must not contain embedded credentials, query parameters, fragments, or whitespace.
 The default remains the pinned public GitHub release when this override is absent.
 
