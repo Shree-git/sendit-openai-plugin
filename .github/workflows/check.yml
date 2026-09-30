@@ -24,3 +24,25 @@ jobs:
         with:
           name: sendit-plugin-packages
           path: dist/
+  cli:
+    name: Validate SendIt CLI
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: cli
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+          cache-dependency-path: cli/package-lock.json
+      - run: npm ci
+      - run: npm test
+      - run: mkdir -p ../cli-dist
+      - run: npm pack --pack-destination ../cli-dist
+      - uses: actions/upload-artifact@v4
+        with:
+          name: sendit-cli-package
+          path: cli-dist/*.tgz
+          if-no-files-found: error

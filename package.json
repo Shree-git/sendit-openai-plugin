@@ -1,6 +1,6 @@
 {
   "name": "@senditapp/openai-plugin-release",
-  "version": "1.1.0",
+  "version": "1.1.1",
   "private": true,
   "description": "Build and validate the public SendIt plugin and standalone agent skill.",
   "type": "module",

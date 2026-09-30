@@ -19,11 +19,13 @@ For the broader SendIt agent catalog, use `https://sendit.infiniteappsai.com/mcp
 
 ## Optional local stdio bridge
 
-The official npm package is `@senditapp/mcp`.
-Its executable is `sendit-mcp`; this is an MCP setup wizard and stdio bridge, not a general-purpose `sendit publish` command.
+The bridge package is `@senditapp/mcp`, with executable `sendit-mcp`.
+It provides an MCP setup wizard and stdio bridge.
+Use the verified `0.1.2` GitHub release while its npm registry update is pending.
+This release fixes scoped-package installation and verifies API-key authentication with a read-only tool call.
 
 ```bash
-npx -y @senditapp/mcp
+npx -y --package=https://github.com/Shree-git/sendit-openai-plugin/releases/download/mcp-v0.1.2/senditapp-mcp-0.1.2.tgz sendit-mcp
 ```
 
 The wizard uses a SendIt API key created in the SendIt dashboard.
@@ -33,7 +35,7 @@ Check the package's `--help` output for supported clients.
 To run its bridge from a shell that already has `SENDIT_API_KEY` set:
 
 ```bash
-npx -y @senditapp/mcp serve
+npx -y --package=https://github.com/Shree-git/sendit-openai-plugin/releases/download/mcp-v0.1.2/senditapp-mcp-0.1.2.tgz sendit-mcp serve
 ```
 
 This process uses stdin and stdout for the MCP protocol and must be started by an MCP client.

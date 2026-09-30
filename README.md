@@ -61,11 +61,12 @@ Discover its catalog before using capabilities beyond the scoped public profile.
 ## Optional terminal bridge
 
 ```bash
-npx -y @senditapp/mcp
+npx -y --package=https://github.com/Shree-git/sendit-openai-plugin/releases/download/mcp-v0.1.2/senditapp-mcp-0.1.2.tgz sendit-mcp
 ```
 
-The scoped npm package provides the `sendit-mcp` setup wizard and a stdio bridge.
-It is not a general-purpose `sendit publish` CLI.
+The public `0.1.2` bridge release provides the `sendit-mcp` setup wizard and a stdio bridge.
+Its npm registry update is pending publishing access; the command above installs the same verified package directly from GitHub.
+Bridge source and tests are in the public repository's `cli/` directory.
 The hosted plugin uses OAuth; the optional terminal bridge uses a SendIt API key entered locally.
 See [terminal setup](plugins/sendit/skills/sendit/references/terminal.md).
 
@@ -76,7 +77,8 @@ The plugin ZIP includes `sendit/plugin.json`, `mcp.json`, the skill, logo, and l
 The standalone skill ZIP includes `sendit/SKILL.md`, its references, and `agents/openai.yaml`.
 Extract the skill into `~/.agents/skills/` for a local Codex skill install and complete MCP OAuth separately if the host does not install the declared dependency.
 
-The package contains no API keys, private app bindings, reviewer passwords, lifecycle hooks, or local executables.
+The plugin ZIP contains no API keys, private app bindings, reviewer passwords, lifecycle hooks, or local executables.
+The optional CLI is distributed separately as an npm-compatible tarball.
 
 ## Build and check
 

@@ -1,7 +1,7 @@
 {
   "$schema": "https://agent-plugins.org/schemas/1.0.0/plugin.schema.json",
   "name": "sendit",
-  "version": "1.1.0",
+  "version": "1.1.1",
   "description": "Connect social accounts, validate and preview posts, publish or schedule content, and review analytics with SendIt.",
   "author": {
     "name": "Infinite Apps AI",
@@ -83,7 +83,7 @@
       },
       "publication": {
         "countries": [],
-        "release_notes": "Adds a portable SendIt plugin package and social publishing skill for ChatGPT and Codex, with the hosted OAuth MCP profile, terminal setup guidance, and current public listing and review cases."
+        "release_notes": "Adds verified terminal setup using the public MCP bridge release, alongside the hosted OAuth MCP profile, social publishing skill, and public listing and review cases."
       }
     }
   }

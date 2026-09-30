@@ -1,0 +1,48 @@
+{
+  "name": "@senditapp/mcp",
+  "version": "0.1.2",
+  "description": "One-click MCP server installer for SendIt - publish to social media from any AI assistant",
+  "license": "MIT",
+  "bin": {
+    "sendit-mcp": "dist/cli.js"
+  },
+  "main": "./dist/cli.js",
+  "type": "module",
+  "files": [
+    "dist"
+  ],
+  "scripts": {
+    "build": "tsc",
+    "test": "npm run build && node --test tests/*.test.mjs",
+    "prepublishOnly": "npm run build"
+  },
+  "dependencies": {
+    "@modelcontextprotocol/sdk": "^1.12.1"
+  },
+  "devDependencies": {
+    "@types/node": "^22.0.0",
+    "typescript": "^5.7.0"
+  },
+  "keywords": [
+    "mcp",
+    "sendit",
+    "social-media",
+    "claude",
+    "ai-assistant",
+    "chatgpt",
+    "vscode",
+    "copilot"
+  ],
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/Shree-git/sendit-openai-plugin.git",
+    "directory": "cli"
+  },
+  "homepage": "https://github.com/Shree-git/sendit-openai-plugin",
+  "bugs": {
+    "url": "https://github.com/Shree-git/sendit-openai-plugin/issues"
+  },
+  "engines": {
+    "node": ">=18"
+  }
+}
