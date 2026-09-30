@@ -19,28 +19,80 @@ For the broader SendIt agent catalog, use `https://sendit.infiniteappsai.com/mcp
 
 ## Optional local stdio bridge
 
-The bridge package is `@senditapp/mcp`, with executable `sendit-mcp`.
-It provides an MCP setup wizard and stdio bridge.
-Use the verified `0.1.3` GitHub release while its npm registry update is pending.
-This release fixes scoped-package installation and verifies API-key authentication with a read-only tool call.
+The published package is `@senditapp/mcp`, with executables `sendit-mcp` and `sendit`.
+It provides an MCP setup wizard, terminal commands, and a stdio bridge.
+Use the verified npm `0.2.1` release:
 
 ```bash
-npx -y --package=https://github.com/Shree-git/sendit-openai-plugin/releases/download/mcp-v0.1.3/senditapp-mcp-0.1.3.tgz sendit-mcp
+npx -y --package=@senditapp/mcp@0.2.1 sendit-mcp
 ```
 
 The wizard uses a SendIt API key created in the SendIt dashboard.
 Enter the key locally when prompted; do not paste it into a chat or commit it to a repository.
-Check the package's `--help` output for supported clients.
+The wizard supports Claude Desktop, Claude Code, VS Code, Cursor, and Windsurf.
+Its generated client entries use unversioned `@senditapp/mcp`, so future client launches can install a newer npm release.
+To keep a specific release, configure the client manually with the pinned command below.
 
 To run its bridge from a shell that already has `SENDIT_API_KEY` set:
+
+```bash
+npx -y --package=@senditapp/mcp@0.2.1 sendit-mcp serve
+```
+
+This process uses stdin and stdout for the MCP protocol and must be started by an MCP client.
+For a host that accepts an `mcpServers` configuration, use this entry and supply `SENDIT_API_KEY` through the host's private environment or secret settings:
+
+```json
+{
+  "mcpServers": {
+    "sendit": {
+      "command": "npx",
+      "args": ["-y", "--package=@senditapp/mcp@0.2.1", "sendit-mcp", "serve"]
+    }
+  }
+}
+```
+
+The bridge's default remote endpoint is `https://sendit.infiniteappsai.com/api/mcp`.
+It provides the broader catalog; discover tools before using capabilities beyond the bundled plugin profile.
+Set `SENDIT_MCP_URL` to select another verified deployment or the scoped `https://sendit.infiniteappsai.com/api/mcp/chatgpt` profile.
+Keep credentials in the user's private environment or secret manager.
+Do not add credential-bearing headers to the distributed plugin's `mcp.json`.
+
+## Terminal commands
+
+Use the top-level help and version flags:
+
+```bash
+npx -y --package=@senditapp/mcp@0.2.1 sendit-mcp --help
+npx -y --package=@senditapp/mcp@0.2.1 sendit-mcp --version
+npx -y --package=@senditapp/mcp@0.2.1 sendit-mcp tools
+```
+
+`tools` performs public discovery and returns the catalog as JSON, including all pages.
+Public discovery does not verify an API key.
+With `SENDIT_API_KEY` already supplied privately, verify authentication or make a read-only call:
+
+```bash
+npx -y --package=@senditapp/mcp@0.2.1 sendit-mcp verify
+npx -y --package=@senditapp/mcp@0.2.1 sendit-mcp call get_platform_requirements '{"platform":"linkedin"}'
+```
+
+`verify` requires a successful authenticated read-only tool call.
+`call` accepts a JSON object as its final argument or from stdin.
+Choose tools and write arguments only for the user's authorized action.
+Failures, including tool results marked `isError`, return a nonzero exit status.
+
+## Legacy bridge
+
+Users retaining CLI `0.1.3` can still use its immutable GitHub release:
 
 ```bash
 npx -y --package=https://github.com/Shree-git/sendit-openai-plugin/releases/download/mcp-v0.1.3/senditapp-mcp-0.1.3.tgz sendit-mcp serve
 ```
 
-This process uses stdin and stdout for the MCP protocol and must be started by an MCP client.
-Keep credentials in the user's private environment or secret manager.
-Do not add credential-bearing headers to the distributed plugin's `mcp.json`.
+This older release provides the setup wizard and stdio bridge.
+The terminal commands described above require `0.2.1`.
 
 ## Install the standalone skill
 

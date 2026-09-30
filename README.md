@@ -61,14 +61,16 @@ Discover its catalog before using capabilities beyond the scoped public profile.
 ## Optional terminal bridge
 
 ```bash
-npx -y --package=https://github.com/Shree-git/sendit-openai-plugin/releases/download/mcp-v0.1.3/senditapp-mcp-0.1.3.tgz sendit-mcp
+npx -y --package=@senditapp/mcp@0.2.1 sendit-mcp
 ```
 
-The public `0.1.3` bridge release provides the `sendit-mcp` setup wizard and a stdio bridge.
-Its npm registry update is pending publishing access; the command above installs the same verified package directly from GitHub.
-Bridge source and tests are in the public repository's `cli/` directory.
+The published npm `0.2.1` CLI provides the `sendit-mcp` setup wizard, terminal commands, and a stdio bridge.
+This exact version was checked with fresh registry installation, authenticated read-only verification against a local fixture, and actual stdio tool and resource calls.
+CLI source and tests are in [SendIt agent integrations](https://github.com/Shree-git/sendit-agent-integrations/tree/main/cli).
 The hosted plugin uses OAuth; the optional terminal bridge uses a SendIt API key entered locally.
-See [terminal setup](plugins/sendit/skills/sendit/references/terminal.md).
+The wizard writes client configurations that use unversioned `@senditapp/mcp`, so subsequent client launches can use a newer npm release.
+For an explicit version pin, use the manual stdio configuration in the [terminal setup guide](plugins/sendit/skills/sendit/references/terminal.md).
+The earlier immutable [GitHub CLI 0.1.3 release](https://github.com/Shree-git/sendit-openai-plugin/releases/tag/mcp-v0.1.3) remains available for users retaining that version.
 
 ## Releases
 
