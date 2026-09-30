@@ -7,6 +7,9 @@ This repository distributes the plugin source and downloadable releases publicly
 Publication in OpenAI's shared Plugins Directory requires a separate review and approval.
 SendIt's existing directory submission is not published.
 
+The [recorded ChatGPT reviewer walkthrough](https://shree-git.github.io/sendit-openai-plugin/) covers account status, draft validation, full LinkedIn and Threads previews, missing-media guidance, and capability boundaries.
+Publishing and scheduling review cases were not run because the creator requested draft checks only.
+
 ## Install in Codex
 
 Add the public repository as a plugin marketplace:
