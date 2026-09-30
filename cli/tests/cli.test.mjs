@@ -1,7 +1,7 @@
 import assert from 'node:assert/strict';
 import { spawnSync } from 'node:child_process';
 import { createServer } from 'node:http';
-import { mkdtemp, readFile, rm, writeFile } from 'node:fs/promises';
+import { mkdir, mkdtemp, readFile, rm, writeFile } from 'node:fs/promises';
 import { tmpdir } from 'node:os';
 import { dirname, join, resolve } from 'node:path';
 import { fileURLToPath } from 'node:url';
@@ -13,12 +13,22 @@ import { writeConfig } from '../dist/clients.js';
 
 const packageRoot = resolve(dirname(fileURLToPath(import.meta.url)), '..');
 
-function runCli(args) {
+function runCli(args, options = {}) {
   return spawnSync(process.execPath, [join(packageRoot, 'dist/cli.js'), ...args], {
     input: '',
     encoding: 'utf8',
     timeout: 5_000,
+    ...options,
   });
+}
+
+function clientFixtureEnvironment(fixtureHome) {
+  return {
+    ...process.env,
+    HOME: fixtureHome,
+    USERPROFILE: fixtureHome,
+    APPDATA: join(fixtureHome, 'AppData', 'Roaming'),
+  };
 }
 
 test('help flags and the help command exit successfully without entering the setup wizard', () => {
@@ -58,13 +68,39 @@ test('unknown commands, options, and extra arguments fail with usage instead of 
   }
 });
 
-test('default invocation and explicit setup retain the interactive wizard', () => {
-  for (const args of [[], ['setup']]) {
-    const result = runCli(args);
+test('default invocation and explicit setup retain the interactive wizard', async () => {
+  const fixtureHome = await mkdtemp(join(tmpdir(), 'sendit-cli-client-'));
+  try {
+    await mkdir(join(fixtureHome, '.claude'));
+    for (const args of [[], ['setup']]) {
+      const result = runCli(args, {
+        input: 'n\n',
+        env: clientFixtureEnvironment(fixtureHome),
+      });
+      assert.equal(result.error, undefined);
+      assert.equal(result.status, 0);
+      assert.match(result.stdout, /One-Click MCP Installer/);
+      assert.match(result.stdout, /Configure SendIt for Claude Code/);
+      assert.match(result.stdout, /Setup cancelled/);
+      assert.equal(result.stderr, '');
+    }
+  } finally {
+    await rm(fixtureHome, { recursive: true });
+  }
+});
+
+test('setup reports missing clients without depending on applications installed on the test host', async () => {
+  const fixtureHome = await mkdtemp(join(tmpdir(), 'sendit-cli-no-clients-'));
+  try {
+    const result = runCli(['setup'], { env: clientFixtureEnvironment(fixtureHome) });
     assert.equal(result.error, undefined);
-    assert.equal(result.status, 0);
+    assert.equal(result.status, 1);
     assert.match(result.stdout, /One-Click MCP Installer/);
+    assert.match(result.stdout, /No supported AI clients detected/);
+    assert.match(result.stdout, /Install one of these clients/);
     assert.equal(result.stderr, '');
+  } finally {
+    await rm(fixtureHome, { recursive: true });
   }
 });
 
